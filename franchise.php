@@ -112,7 +112,7 @@ include 'include/sidebar.php';
                         </div>
                       </div>
 
-                      <div class="col-sm-6">
+                      <div class="col-sm-12">
                         <div class="form-group">
                         <label for="">franchise_type</label>
                         <select name="franchise_type_id" id="franchise_type_id" class="form-control">

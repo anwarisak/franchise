@@ -107,7 +107,7 @@ include 'include/sidebar.php';
                         </div>
                       </div>
 
-                      <div class="col-sm-4">
+                      <div class="col-sm-12">
                         <div class="form-group">
                         <label for="">amount</label>
                         <input type="number" class="form-control" id="amount" name="amount" placeholder="amount">
