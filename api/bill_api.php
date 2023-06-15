@@ -4,198 +4,91 @@ header("content-type: application/json");
 include '../config/conn.php';
 // $action = $_POST['action'];
 
-function register_bill($conn){
-    extract($_POST);
-    $data = array();
-    $query = "INSERT INTO bill (employee_id,account_id, amount)
-     values('$employee', '$account','$amount')";   $result = $conn->query($query);
 
-
-    if($result){
-
-       
-            $data = array("status" => true, "data" => "successfully Registered");
-
-
-    }else{
-        $data = array("status" => false, "data"=> $conn->error);
-             
-    }
-
-    echo json_encode($data);
-}
-
-
-function read_all_patient_statement($conn){
+function read_employe_salary($conn)
+{
     extract($_POST);
     $data = array();
     $array_data = array();
-    $query ="CALL get_patient('$from', '$to')";
+    $query = "SELECT SUM(Amount) as salary from charge WHERE employee_id=('$employee_id') and active=0";
     $result = $conn->query($query);
 
 
-    if($result){
-        while($row = $result->fetch_assoc()){
+    if ($result) {
+        while ($row = $result->fetch_assoc()) {
             $array_data[] = $row;
         }
         $data = array("status" => true, "data" => $array_data);
-
-
-    }else{
-        $data = array("status" => false, "data"=> $conn->error);
-             
+    } else {
+        $data = array("status" => false, "data" => $conn->error);
     }
 
     echo json_encode($data);
 }
 
-
-
-function readaccount($conn){
+function register_bills($conn)
+{
+    extract($_POST);
     $data = array();
-    $array_data = array();
-   $query ="SELECT * from account";
+    $query = "INSERT INTO `bill`(`employee_id`, `Amount`, `user`)
+    VALUES('$employee_idd', '$amount', '$user')";
     $result = $conn->query($query);
 
+    if ($result) {
 
-    if($result){
-        while($row = $result->fetch_assoc()){
-            $array_data[] = $row;
-        }
-        $data = array("status" => true, "data" => $array_data);
-
-
-    }else{
-        $data = array("status" => false, "data"=> $conn->error);
-             
+        $data = array("status" => true, "data" => "Transaction Successfully");
+    } else {
+        $data = array("status" => false, "data" => $conn->error);
     }
+
 
     echo json_encode($data);
 }
 
-function read_bill($conn){
-    $data = array();
-    $array_data = array();
-   $query ="SELECT * from bill";
-    $result = $conn->query($query);
-
-
-    if($result){
-        while($row = $result->fetch_assoc()){
-            $array_data[] = $row;
-        }
-        $data = array("status" => true, "data" => $array_data);
-
-
-    }else{
-        $data = array("status" => false, "data"=> $conn->error);
-             
-    }
-
-    echo json_encode($data);
-}
-
-
-function reademployee($conn){
-    $data = array();
-    $array_data = array();
-   $query ="SELECT * from employee";
-    $result = $conn->query($query);
-
-
-    if($result){
-        while($row = $result->fetch_assoc()){
-            $array_data[] = $row;
-        }
-        $data = array("status" => true, "data" => $array_data);
-
-
-    }else{
-        $data = array("status" => false, "data"=> $conn->error);
-             
-    }
-
-    echo json_encode($data);
-}
-
-function get_customer($conn){
+function read_bills($conn)
+{
     extract($_POST);
     $data = array();
     $array_data = array();
-   $query ="SELECT *FROM customer where customer_id= '$customer_id'";
+    $query = "select * from bill";
     $result = $conn->query($query);
 
 
-    if($result){
-        $row = $result->fetch_assoc();
-        
-        $data = array("status" => true, "data" => $row);
-
-
-    }else{
-        $data = array("status" => false, "data"=> $conn->error);
-             
+    if ($result) {
+        while ($row = $result->fetch_assoc()) {
+            $array_data[] = $row;
+        }
+        $data = array("status" => true, "data" => $array_data);
+    } else {
+        $data = array("status" => false, "data" => $conn->error);
     }
 
     echo json_encode($data);
 }
 
-
-
-
-function update_bill($conn){
-    extract($_POST);
-
-    $data = array();
-
-    $query = "UPDATE bill set employee_id = '$employee_id',account_id = '$account_id', amount = '$amount' WHERE bill_id = '$bill_id'";
-
-    $result = $conn->query($query);
-
-
-    if($result){
-
-            $data = array("status" => true, "data" => "well done");
-
-
-    }else{
-        $data = array("status" => false, "data"=> $conn->error);
-             
-    }
-
-    echo json_encode($data);
-}
-
-function Delete_bill($conn){
-    extract($_POST);
+function read_all_employeeee($conn)
+{
     $data = array();
     $array_data = array();
-   $query ="DELETE FROM bill where bill_id= '$bill_id'";
+    $query = "SELECT Distinct e.employee_id,concat(e.fristname, ' ', e.lastname) as employee_name FROM charge ch JOIN employee e on ch.employee_id=e.employee_id 
+    WHERE ch.active=0";
     $result = $conn->query($query);
 
-
-    if($result){
-   
-        
-        $data = array("status" => true, "data" => "successfully Deleted");
-
-
-    }else{
-        $data = array("status" => false, "data"=> $conn->error);
-             
+    if ($result) {
+        while ($row = $result->fetch_assoc()) {
+            $array_data[] = $row;
+        }
+        $data = array("status" => true, "data" => $array_data);
+    } else {
+        $data = array("status" => false, "data" => $conn->error);
     }
 
     echo json_encode($data);
 }
 
-
-if(isset($_POST['action'])){
+if (isset($_POST['action'])) {
     $action = $_POST['action'];
     $action($conn);
-}else{
-    echo json_encode(array("status" => false, "data"=> "Action Required....."));
+} else {
+    echo json_encode(array("status" => false, "data" => "Action Required....."));
 }
-
-
-
-?>

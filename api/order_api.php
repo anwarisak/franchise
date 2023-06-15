@@ -48,6 +48,27 @@ function read_orders($conn)
 }
 
 
+function read_item_price($conn)
+{
+    extract($_POST);
+    $data = array();
+    $array_data = array();
+    $query = "CALL get_item_price('$item_id')";
+    $result = $conn->query($query);
+
+
+    if ($result) {
+        while ($row = $result->fetch_assoc()) {
+            $array_data[] = $row;
+        }
+        $data = array("status" => true, "data" => $array_data);
+    } else {
+        $data = array("status" => false, "data" => $conn->error);
+    }
+
+    echo json_encode($data);
+}
+
 
 
 function read_franchisee($conn)

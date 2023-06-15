@@ -91,25 +91,21 @@ include 'include/header.php';
 
                 <div class="col-sm-6">
                   <div class="form-group">
-                    <label for="">payment_method</label>
-                    <select name="payment_method_id" id="payment_method_id" class="form-control">
-                    </select>
-                  </div>
-                </div>
-                <div class="col-sm-6">
-                  <div class="form-group">
                     <label for="">Franchisee</label>
                     <select name="franchisee_id" id="franchisee_id" class="form-control">
+                      <option value="0">select frenchaise</option>
                     </select>
                   </div>
                 </div>
 
+
                 <div class="col-sm-6">
                   <div class="form-group">
                     <label for="">amount </label>
-                    <input type="text" class="form-control" id="amount" name="amount" placeholder="amount">
+                    <input type="text" class="form-control" id="amount" name="amount" placeholder="amount" readonly>
                   </div>
                 </div>
+
 
 
                 <div class="col-sm-6">
@@ -127,6 +123,8 @@ include 'include/header.php';
                     </select>
                   </div>
                 </div>
+
+
 
                 <div class="modal-footer justify-content-center"">
                             <button type=" submit" class="btn btn-success" id="toastTrigger">payment</button>

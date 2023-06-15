@@ -81,6 +81,20 @@
         </ul>
       </div>
     </li>
+
+
+    <li class="nav-item">
+      <a class="nav-link" data-toggle="collapse" href="#bills" aria-expanded="false" aria-controls="bills">
+        <i class="icon-grid-2 menu-icon"></i>
+        <span class="menu-title">bills</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse" id="bills">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"> <a class="nav-link" href="bills.php">make bill</a></li>
+        </ul>
+      </div>
+    </li>
     <li class="nav-item">
       <a class="nav-link" data-toggle="collapse" href="#account" aria-expanded="false" aria-controls="account">
         <i class="icon-head menu-icon"></i>
@@ -160,7 +174,7 @@
       </div>
     </li>
 
-    
+
 
     <li class="nav-item">
       <a class="nav-link" data-toggle="collapse" href="#charge" aria-expanded="false" aria-controls="charge">
@@ -175,7 +189,7 @@
       </div>
     </li>
 
-    
+
     <li class="nav-item">
       <a class="nav-link" data-toggle="collapse" href="#payment_method" aria-expanded="false" aria-controls="payment_method">
         <i class="icon-plus menu-icon"></i>
@@ -188,7 +202,7 @@
         </ul>
       </div>
     </li>
-     
+
     <li class="nav-item">
       <a class="nav-link" data-toggle="collapse" href="#job_title" aria-expanded="false" aria-controls="job_title">
         <i class="icon-box menu-icon"></i>

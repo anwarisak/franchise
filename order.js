@@ -1,6 +1,8 @@
 loadoerder();
 loadfranchisee();
 fillitem();
+fill_price();
+fill_price2();
 $("#addorder").on("click", function(){
 
     $("#ordermodal").modal("show");
@@ -157,6 +159,121 @@ $("#orderform").on("submit", function(event){
   }
 
 
+  
+$("#item_id").on("change", function () {
+  let item_id = $(this).val();
+  console.log("item_id", item_id);
+  fill_price(item_id);
+
+})
+
+$("#item_id").on("change", function(){
+  if($("#item_id").val()== 0){
+    console.log("0 waaye");
+    $("#amount").val("");
+
+  }else{
+    console.log(amount);
+  }
+})
+
+
+
+$("#quantity").on("change", function () {
+  let quantity = $(this).val();
+ let item_id = $("#item_id").val();
+  fill_price2(item_id, quantity);
+  console.log("quantity",quantity);
+  console.log("item_id",item_id);
+
+})
+
+
+
+
+function fill_price(item_id) {
+  let sendingData = {
+    "action": "read_item_price",
+    "item_id": item_id
+
+  }
+
+  $.ajax({
+    method: "POST",
+    dataType: "JSON",
+    url: "api/order_api.php",
+    data: sendingData,
+
+    success: function (data) {
+      let status = data.status;
+      let response = data.data;
+      console.log("name", response)
+      let html = '';
+      let tr = '';
+
+      if (status) {
+
+        response.forEach(res => {
+          $("#amount").val(res['price']);
+
+        })
+
+
+
+      } else {
+        displaymessage("error", response);
+      }
+
+    },
+    error: function (data) {
+
+    }
+
+  })
+}
+
+
+
+function fill_price2(item_id,quantity) {
+  let sendingData = {
+    "action": "read_item_price",
+    "item_id": item_id
+
+  }
+
+  $.ajax({
+    method: "POST",
+    dataType: "JSON",
+    url: "api/order_api.php",
+    data: sendingData,
+
+    success: function (data) {
+      let status = data.status;
+      let response = data.data;
+      console.log("name", response)
+      let html = '';
+      let tr = '';
+
+      if (status) {
+
+        response.forEach(res => {
+          $("#amount").val(res['price']*quantity);
+
+        })
+
+
+
+      } else {
+        displaymessage("error", response);
+      }
+
+    },
+    error: function (data) {
+
+    }
+
+  })
+}
 
 
  function loadoerder(){
@@ -219,6 +336,7 @@ $("#orderform").on("submit", function(event){
     })
   }
 
+  
   function get_order(orders_id){
   
     let sendingData ={

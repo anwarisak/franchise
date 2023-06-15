@@ -1,19 +1,15 @@
-$("#billbutton").on("click", function(){
-    $("#billmodal").modal("show");
-    console.log("office");
-  });
+$("#add_bills").on("click", function(){
+    $("#bill_modal").modal("show");
+});
+fill_salary();
+read_employee();
   
-  reademployee();
-  read_account();
-  
-  loadbill();
-  read_p_method();
+  load_bill();
   btnAction = "Insert";
-  
-  
-  function reademployee() {
+
+  function read_employee() {
     let sendingData = {
-      action: "reademployee",
+      action: "read_all_employeeee",
     };
   
     $.ajax({
@@ -30,10 +26,10 @@ $("#billbutton").on("click", function(){
   
         if (status) {
           response.forEach((res) => {
-            html += `<option value="${res["employee_id"]}">${res["fristname"]}</option>`;
+            html += `<option value="${res["employee_id"]}">${res["employee_name"]}</option>`;
           });
   
-          $("#employee").append(html);
+          $("#employee_idd").append(html);
         } else {
           displaymssage("error", response);
         }
@@ -73,13 +69,13 @@ $("#billbutton").on("click", function(){
       });
     }
   
-  $("#billForm").on("submit", function (e) {
+  $("#billform").on("submit", function (e) {
       e.preventDefault();
   
   
-      let employee = $("#employee").val();
-      let account = $("#account").val();
+      let employee_idd = $("#employee_idd").val();
       let amount = $("#amount").val();
+      let user = $("#user").val();
   
       let bill_id = $("#update_id").val();
   
@@ -87,60 +83,108 @@ $("#billbutton").on("click", function(){
   
       if (btnAction == "Insert") {
           sendingData = {
-              employee: employee,
-              account: account,
+              employee_idd: employee_idd,
               amount: amount,
-              
-              
-          
-              action: "register_bill"
+              user: user,
+              action: "register_bills"
           };
-      } else {
-          sendingData = {
-              bill_id: id,
-              employee: employee,
-              account: account,
-              amount: amount,
-             
-              
-              
-              action: "update_bill",
-          };
+   
       }
   
       $.ajax({
           method: "POST",
           dataType: "JSON",
-          url: "Api/bill_api.php",
+          url: "api/bill_api.php",
           data: sendingData,
           success: function (data) {
               let status = data.status;
               let response = data.data;
   
               if(status){
-                  dispplaymessage("success", response);
+                display_message("success", response);
                   btnAction="Insert";
-                  loadbill();
-                  $("#billtForm")[0].reset();
-                  $("billmodal").modal("hide");
-                  loadbill();
+                  load_bill();
+                  $("#billform")[0].reset();
                  
                   
          
                  }else{
-                  dispplaymessage("error", response);
+                    display_message("error", response);
                  }
                  
              },
              error: function(data){
-              dispplaymessage("error", data.responseText);
+                display_message("error", data.responseText);
          
              }
          
            })
   })
+
+
+
+  $("#employee_idd").on("change", function () {
+    let employee_idd = $(this).val();
+    console.log("employee_idd", employee_idd);
+    fill_salary(employee_idd);
+    console.log('llll');
   
-  function loadbill() {
+  })
+
+
+  $("#employee_idd").on("change", function(){
+    if($("#employee_idd").val()== 0){
+      console.log("0 waaye");
+      $("#amount").val("");
+  
+    }else{
+      console.log(amount);
+    }
+  })
+  
+  
+function fill_salary(employee_id) {
+  let sendingData = {
+    "action": "read_employe_salary",
+    "employee_id": employee_id
+
+  }
+
+  $.ajax({
+    method: "POST",
+    dataType: "JSON",
+    url: "api/bill_api.php",
+    data: sendingData,
+
+    success: function (data) {
+      let status = data.status;
+      let response = data.data;
+      console.log("name", response)
+      let html = '';
+      let tr = '';
+
+      if (status) {
+
+        response.forEach(res => {
+          $("#amount").val(res['salary']);
+
+        })
+
+
+
+      } else {
+        displaymessage("error", response);
+      }
+
+    },
+    error: function (data) {
+
+    }
+
+  })
+}
+  
+  function load_bill() {
       $("#billTable tbody").html("");
      $("#billTable thead").html("");
   
@@ -194,43 +238,8 @@ $("#billbutton").on("click", function(){
       });
   }
   
-  
-  function get_employe(bill_id) {
-      let sendingData = {
-          action: "get_employe",
-          bill_id: bill_id,
-      };
-  
-      $.ajax({
-          method: "POST",
-          dataType: "JSON",
-          url: "Api/employee_api.php",
-          data: sendingData,
-  
-          success: function (data) {
-              let status = data.status;
-              let response = data.data;
-  
-              if (status) {
-                  btnAction = "update";
-  
-                  $("#update_id").val(response["bill_id"]);
-                  $("#employee").val(response["fristname"]);
-                  $("#amount").val(response["lastname"]);
-                  $("#account").val(response["account"]);
-                  $("#account").val(response["account"]);
-                  $("#payment").val(response["bill_id"]);
-                  $("#employemodal").modal("show");
-                  loadaccount();
-              } else {
-                  dispplaymessage("error", response);
-              }
-          },
-          error: function (data) { },
-      });
-  }
-  
-  function dispplaymessage(type, message) {
+
+  function display_message(type, message) {
       let success = document.querySelector(".alert-success");
       let error = document.querySelector(".alert-danger");
       if (type == "success") {
@@ -241,48 +250,11 @@ $("#billbutton").on("click", function(){
           setTimeout(function () {
               // $("#bookingmodal").modal("hide");
               success.classList = "alert alert-success d-none";
-          }, 2000);
+          }, 4000);
       } else {
           error.classList = "alert alert-danger";
           error.innerHTML = message;
       }
   }
   
-  function Delete_employe(bill_id) {
-      let sendingData = {
-          action: "Delete_employe",
-          bill_id: bill_id,
-      };
-  
-      $.ajax({
-          method: "POST",
-          dataType: "JSON",
-          url: "Api/employee_api.php",
-          data: sendingData,
-  
-          success: function (data) {
-              let status = data.status;
-              let response = data.data;
-  
-              if (status) {
-                  swal("Good job!", response, "success");
-              } else {
-                  swal(response);
-              }
-          },
-          error: function (data) { },
-      });
-  }
-  
-  $("#paymentTable").on("click", "a.update_info", function () {
-      let id = $(this).attr("update_id");
-      get_employe(id);
-  });
-  
-  $("#paymentTable").on("click", "a.delete_info", function () {
-      let id = $(this).attr("delete_id");
-      if (confirm("Are you sure To Delete")) {
-          Delete_employe(id);
-      }
-  });
-  
+ 

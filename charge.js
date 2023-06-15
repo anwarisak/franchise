@@ -1,4 +1,4 @@
-loadoerder();
+load_charges();
 fillmonth();
 fillaccount();
 $("#addcharge").on("click", function(){
@@ -14,37 +14,26 @@ $("#chargeform").on("submit", function(event){
     event.preventDefault();
   
   
-    let month_id= $("#month_id").val();
+    let month_idd= $("#month_idd").val();
     let year= $("#year").val();
     let description= $("#description").val();
-    let users_id= $("#users_id").val();
-    let account_id= $("#account_id").val();
+    let user_id= $("#user_id").val();
+    let Acount_id= $("#Acount_id").val();
     let charge_id= $("#update_id").val();
   
     let sendingData = {}
   
     if(btnAction == "Insert"){
        sendingData = {
-        "month_id": month_id,
+        "month_idd": month_idd,
         "year": year,
         "description": description,
-        "users_id": users_id,
-        "account_id": account_id,
+        "user_id": user_id,
+        "Acount_id": Acount_id,
         "action": "register_charge",
     }
   
-    }else{
-        sendingData = {
-            "charge_id": charge_id,
-            "month_id": month_id,
-            "year": year,
-            "description": description,
-            "users_id": users_id,
-            "account_id": account_id,
-            "action": "update_charge",
-            
-     
-     }
+   
   
   }
   
@@ -59,16 +48,16 @@ $("#chargeform").on("submit", function(event){
         let response= data.data;
   
         if(status){
-         dispalaymessage("success", response);
+         display_message("success", response);
          btnAction="Insert";
 
          $("#chargeform")[0].reset();
 
          $("chargemodal").modal("hide");
-         loadoerder();
+         loadcharge();
   
         }else{
-            dispalaymessage("error", response);
+          display_message("error", response);
         }
         
     },
@@ -101,11 +90,11 @@ $("#chargeform").on("submit", function(event){
   
             if(status){
                 response.forEach(res=>{
-                  html+= `<option value="${res['month_id']}">${res['name']}</option>`;
+                  html+= `<option value="${res['month_id']}">${res['month_name']}</option>`;
                    
                 })
   
-                $("#month_id").append(html);
+                $("#month_idd").append(html);
   
                
             }else{
@@ -140,11 +129,11 @@ $("#chargeform").on("submit", function(event){
   
             if(status){
                 response.forEach(res=>{
-                  html+= `<option value="${res['account_id']}">${res['name']}</option>`;
+                  html+= `<option value="${res['account_id']}">${res['bank']}</option>`;
                    
                 })
   
-                $("#account_id").append(html);
+                $("#Acount_id").append(html);
   
                
             }else{
@@ -159,10 +148,7 @@ $("#chargeform").on("submit", function(event){
     })
   }
 
-
-
-
- function loadoerder(){
+ function load_charges(){
     $("#chargetable tbody").html('');
     $("#chargetable thead").html('');
    
@@ -218,48 +204,7 @@ $("#chargeform").on("submit", function(event){
     })
   }
 
-  function get_charge(charge_id){
-  
-    let sendingData ={
-      "action": "get_charge",
-      "charge_id": charge_id
-  }
-  
-  $.ajax({
-    method: "POST",
-    dataType: "JSON",
-    url: "api/charge_api.php",
-    data : sendingData,
-  
-      success : function(data){
-          let status= data.status;
-          let response= data.data;
-        
-  
-          if(status){
-  
-               btnAction= "update";
-  
-               $("#update_id").val(response['charge_id']);
-               $("#month_id").val(response['month_id']);
-               $("#account_id").val(response['account_id']);
-               $("#quantity").val(response['quantity']);
-               $("#chargemodal").modal("show");
-           
-  
-          }else{
-            displaymessagee("error", response);
-          }
-  
-      },
-      error: function(data){
-  
-      }
-  
-  })
-  }
-  
-  function dispalaymessage(type, message){
+  function display_message(type, message){
     let success =   document.querySelector(".alert-success");
     let error =   document.querySelector(".alert-danger");
     if(type== "success"){
@@ -279,54 +224,3 @@ $("#chargeform").on("submit", function(event){
     }
   }
 
-
-  function Delete_charge(charge_id){
-  
-    let sendingData ={
-      "action": "delete_charge",
-      "charge_id": charge_id
-  }
-  
-  $.ajax({
-    method: "POST",
-    dataType: "JSON",
-    url: "api/charge_api.php",
-    data : sendingData,
-  
-      success : function(data){
-          let status= data.status;
-          let response= data.data;
-        
-  
-          if(status){
-  
-            swal("Good job!", response, "success");
-            loadoerder();
-  
-          }else{
-            swal(response);
-          }
-  
-      },
-      error: function(data){
-  
-      }
-  
-  })
-  }
-
-  $("#chargetable").on('click', "button.update_info", function(){
-    let charge_id= $(this).attr("update_id");
-    get_charge(charge_id);
-    console.log(charge_id)
-
-  })
-  
-  $("#chargetable").on('click', "button.delete_info", function(){
-    let charge_id= $(this).attr("delete_id");
-    if(confirm("Are you sure To Delete")){
-      Delete_charge(charge_id)
-  
-    }
-   
-  })

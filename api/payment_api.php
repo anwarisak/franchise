@@ -8,11 +8,8 @@ function register_payment($conn)
 {
     extract($_POST);
     $data = array();
-    $new_id = generate($conn);
-    //$query = "call massage('$new_id','$customer_id','$invoice_id','$order_id','$account_id','$amount','$payment_method_id')";
-
-    $query = "INSERT INTO payment(payment_method_id, franchisee_id,amount, account_id)
-    VALUES('$payment_method_id', '$franchisee_id','$amount','$account_id')";
+    $query = "INSERT INTO payment(franchisee_id, amount, account_id, payment_method_id)
+    VALUES('$franchisee_id', '$amount','$account_id','$payment_method_id')";
 
     $result = $conn->query($query);
 
@@ -26,7 +23,6 @@ function register_payment($conn)
 
     echo json_encode($data);
 }
-
 
 function read_payment($conn)
 {
@@ -54,11 +50,13 @@ function read_payment($conn)
     return $new_id;
 }
 
-function tableview($conn)
+
+function read_total_amount($conn)
 {
+    extract($_POST);
     $data = array();
     $array_data = array();
-    $query = "SELECT * FROM payment";
+    $query = "CALL read_total_amount('$franchisee_id')";
     $result = $conn->query($query);
 
 
@@ -79,9 +77,8 @@ function read_franchisee($conn)
 {
     $data = array();
     $array_data = array();
-    $query = "select * from franchisee";
+    $query = "SELECT f.franchisee_id,f.name as franchise_name from orders o JOIN franchisee f on o.franchisee_id=f.franchisee_id where o.status='pending'";
     $result = $conn->query($query);
-
 
     if ($result) {
         while ($row = $result->fetch_assoc()) {
@@ -94,7 +91,6 @@ function read_franchisee($conn)
 
     echo json_encode($data);
 }
-
 
 function read_payment_method($conn)
 {
@@ -119,6 +115,7 @@ function read_payment_method($conn)
 
 function read_amount($conn)
 {
+    extract($_POST);
     $data = array();
     $array_data = array();
     $query = "select sum(invoice_total) from invoice where customer_id= '$customer_id'";
@@ -136,9 +133,6 @@ function read_amount($conn)
 
     echo json_encode($data);
 }
-
-
-
 
 function readpayment_method($conn)
 {
@@ -158,11 +152,12 @@ function readpayment_method($conn)
 
     echo json_encode($data);
 }
-function readaccount($conn)
+
+function read_account($conn)
 {
     $data = array();
     $array_data = array();
-    $query = "SELECT account_id,bank_name from account";
+    $query = "SELECT * from account";
     $result = $conn->query($query);
 
 
@@ -177,70 +172,6 @@ function readaccount($conn)
 
     echo json_encode($data);
 }
-
-
-
-function get_payment($conn)
-{
-    extract($_POST);
-    $data = array();
-    $array_data = array();
-    $query = "SELECT * FROM payment where payment_id= '$payment_id'";
-    $result = $conn->query($query);
-
-    if ($result) {
-        $row = $result->fetch_assoc();
-
-        $data = array("status" => true, "data" => $row);
-    } else {
-        $data = array("status" => false, "data" => $conn->error);
-    }
-
-    echo json_encode($data);
-}
-
-function update_payment($conn)
-{
-    extract($_POST);
-
-    $data = array();
-
-    $query = "UPDATE payment set customer_id = '$customer_id',
-    account_id = '$account_id',amount = '$amount',payment_method_id = '$payment_method_id'
-     WHERE payment_id = '$payment_id'";
-
-    $result = $conn->query($query);
-
-    if ($result) {
-
-        $data = array("status" => true, "data" => "the payment has been updated");
-    } else {
-        $data = array("status" => false, "data" => $conn->error);
-    }
-
-    echo json_encode($data);
-}
-
-function Delete_payment($conn)
-{
-    extract($_POST);
-    $data = array();
-    $array_data = array();
-    $query = "DELETE FROM payment where payment_id= '$payment_id'";
-    $result = $conn->query($query);
-
-
-    if ($result) {
-
-
-        $data = array("status" => true, "data" => "the invoice has been deleted");
-    } else {
-        $data = array("status" => false, "data" => $conn->error);
-    }
-
-    echo json_encode($data);
-}
-
 
 if (isset($_POST['action'])) {
     $action = $_POST['action'];

@@ -73,11 +73,11 @@ include 'include/sidebar.php';
                     <div class="row">
                         <div class="col-12">
                                     <div class="alert alert-success d-none" role="alert">
-            This is a success alert—check it out!
-            </div>
-            <div class="alert alert-danger d-none" role="alert">
-            This is a danger alert—check it out!
-            </div>
+                                This is a success alert—check it out!
+                                </div>
+                                <div class="alert alert-danger d-none" role="alert">
+                                This is a danger alert—check it out!
+                          </div>
                         </div>
                         <div class="col-sm-12">
                         <div class="form-group">

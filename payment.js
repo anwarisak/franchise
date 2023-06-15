@@ -4,12 +4,12 @@ fillorder();
 fillpaymentmethod();
 fillpayment_method();
 fillfranchisee();
-fillaccount();
+fill_total_price();
+fill_account();
 $("#addpayment").on("click", function(){
   $("#paymentform")[0].reset();
     $("#paymentmodal").modal("show");
 });
-
 
 
 btnAction = "Insert";
@@ -17,38 +17,22 @@ $("#paymentform").on("submit", function(event){
     
     event.preventDefault();
 
-    let customer_id= $("#customer_id").val();
-    let invoice_id= $("#invoice_id").val();
-    let order_id= $("#order_id").val();
-    let account_id= $("#account_id").val();
+    let franchisee_id= $("#franchisee_id").val();
     let amount= $("#amount").val();
+    let account_id= $("#account_id").val();
     let payment_method_id= $("#payment_method_id").val();
-    let payment_id= $("#update_id").val();
   
     let sendingData = {}
   
     if(btnAction == "Insert"){
        sendingData = {
-        "customer_id": customer_id,
-        "invoice_id": invoice_id,
-        "order_id": order_id,
-        "account_id": account_id,
+        "franchisee_id": franchisee_id,
         "amount": amount,
+        "account_id": account_id,
         "payment_method_id": payment_method_id,
         "action": "register_payment",
     }
   
-    }else{
-        sendingData = {
-            "payment_id": payment_id,
-            "customer_id": customer_id,
-            "invoice_id": invoice_id,
-            "order_id": order_id,
-            "account_id": account_id,
-            "amount": amount,
-            "payment_method_id": payment_method_id,
-            "action": "update_payment",
-     }
   
   }
   
@@ -83,6 +67,7 @@ $("#paymentform").on("submit", function(event){
   })
   
   })
+
   function fillfranchisee(){
  
     let sendingData ={
@@ -103,7 +88,7 @@ $("#paymentform").on("submit", function(event){
   
             if(status){
                 response.forEach(res=>{
-                  html+= `<option value="${res['franchisee_id']}">${res['franchisee']}</option>`;
+                  html+= `<option value="${res['franchisee_id']}">${res['franchise_name']}</option>`;
                    
                 })
   
@@ -200,6 +185,7 @@ $("#paymentform").on("submit", function(event){
   
     })
   }
+
   function fillorder(){
  
     let sendingData ={
@@ -276,10 +262,10 @@ $("#paymentform").on("submit", function(event){
   
     })
   }
-  function fillaccount(){
+  function fill_account(){
  
     let sendingData ={
-        "action": "readaccount"
+        "action": "read_account"
     }
   
     $.ajax({
@@ -296,7 +282,7 @@ $("#paymentform").on("submit", function(event){
   
             if(status){
                 response.forEach(res=>{
-                  html+= `<option value="${res['account_id']}">${res['bank_name']}</option>`;
+                  html+= `<option value="${res['account_id']}">${res['bank']}</option>`;
                    
                 })
   
@@ -314,6 +300,69 @@ $("#paymentform").on("submit", function(event){
   
     })
   }
+
+
+  $("#franchisee_id").on("change", function () {
+    let franchisee_id = $(this).val();
+    console.log("franchisee_id", franchisee_id);
+    fill_total_price(franchisee_id);
+  
+  })
+
+
+  $("#franchisee_id").on("change", function(){
+    if($("#franchisee_id").val()== 0){
+      console.log("0 waaye");
+      $("#amount").val("");
+  
+    }else{
+      console.log(amount);
+    }
+  })
+  
+  
+function fill_total_price(franchisee_id) {
+  let sendingData = {
+    "action": "read_total_amount",
+    "franchisee_id": franchisee_id
+
+  }
+
+  $.ajax({
+    method: "POST",
+    dataType: "JSON",
+    url: "api/payment_api.php",
+    data: sendingData,
+
+    success: function (data) {
+      let status = data.status;
+      let response = data.data;
+      console.log("name", response)
+      let html = '';
+      let tr = '';
+
+      if (status) {
+
+        response.forEach(res => {
+          $("#amount").val(res['total_amount']);
+
+        })
+
+
+
+      } else {
+        displaymessage("error", response);
+      }
+
+    },
+    error: function (data) {
+
+    }
+
+  })
+}
+
+
 
  function loadpayment(){
     $("#paymnettable tbody").html('');
@@ -376,50 +425,7 @@ $("#paymentform").on("submit", function(event){
     })
   }
 
-  function get_payment(payment_id){
-  
-    let sendingData ={
-      "action": "get_payment",
-      "payment_id": payment_id
-  }
-  
-  $.ajax({
-    method: "POST",
-    dataType: "JSON",
-    url: "api/payment_api.php",
-    data : sendingData,
-  
-      success : function(data){
-          let status= data.status;
-          let response= data.data;
-        
-  
-          if(status){
-  
-               btnAction= "update";
-  
-               $("#update_id").val(response['payment_id']);
-               $("#customer_id").val(response['customer_id'] );
-               $("#order_id").val(response['order_id']);
-               $("#account_id").val(response['account_id']);
-               $("#amount").val(response['amount']);
-               $("#payment_method_id").val(response['payment_method_id']);
-               $("#account_id").val(response['account_id']).readonly;
-             
-               $("#paymentmodal").modal("show");
-           
-  
-          }else{
-            displaymessagee("error", response);
-          }
-  
-      },
-      error: function(data){
-  
-      }
-  
-  })
-  }
+
 
   function dispalaymessage(type, message){
     let success =   document.querySelector(".alert-success");
@@ -442,63 +448,5 @@ $("#paymentform").on("submit", function(event){
   }
 
 
-  function Delete_payment(payment_id){
-  
-    let sendingData ={
-      "action": "Delete_payment",
-      "payment_id": payment_id
-  }
-  
-  $.ajax({
-    method: "POST",
-    dataType: "JSON",
-    url: "api/payment_api.php",
-    data : sendingData,
-  
-      success : function(data){
-          let status= data.status;
-          let response= data.data;
-        
-  
-          if(status){
-  
-            swal("Good job!", response, "success");
-            loadpayment();
-  
-          }else{
-            swal(response);
-          }
-  
-      },
-      error: function(data){
-  
-      }
-  
-  })
-  }
-
  
 
-//$phoneNumber=252617490299;
-
-//sendtext($phoneNumber);
-
-
-  $("#paymnettable").on('click', "button.update_info", function(){
-    let payment_id= $(this).attr("update_id");
-    get_payment(payment_id);
-    console.log(payment_id)
-
-  })
-
-
-  
-  $("#paymnettable").on('click', "button.delete_info", function(){
-    let payment_id= $(this).attr("delete_id");
-    console.log(payment_id);
-    if(confirm("Are you sure To Delete")){
-      Delete_payment(payment_id)
-  
-    }
-   
-  })
