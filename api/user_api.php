@@ -20,7 +20,7 @@ function register_user($conn)
     // allowed images
 
     $allowedImages =  ["image/jpg", "image/jpeg", "image/png"];
-    $max_size = 15 * 1024 * 1024;
+    $max_size = 20 * 1024 * 1024;
 
     if (in_array($file_type, $allowedImages)) {
 

@@ -15,7 +15,7 @@ read_employee();
     $.ajax({
       method: "POST",
       dataType: "JSON",
-      url: "Api/bill_api.php",
+      url: "api/bill_api.php",
       data: sendingData,
   
       success: function (data) {
@@ -46,7 +46,7 @@ read_employee();
       $.ajax({
         method: "POST",
         dataType: "JSON",
-        url: "Api/bill_api.php",
+        url: "api/bill_api.php",
         data: sendingData,
     
         success: function (data) {
@@ -189,13 +189,13 @@ function fill_salary(employee_id) {
      $("#billTable thead").html("");
   
       let sendingData = {
-          action: "read_bill",
+          action: "read_bills",
       };
   
       $.ajax({
           method: "POST",
           dataType: "JSON",
-          url: "Api/bill_api.php",
+          url: "api/bill_api.php",
           data: sendingData,
   
           success: function (data) {

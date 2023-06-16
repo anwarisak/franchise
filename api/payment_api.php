@@ -29,7 +29,7 @@ function read_payment($conn)
     $new_id = '';
     $data = array();
     $array_data = array();
-    $query = "SELECT * FROM payment ";
+    $query = "SELECT * FROM payment";
     $result = $conn->query($query);
 
     if ($result) {
@@ -97,6 +97,25 @@ function read_payment_method($conn)
     $data = array();
     $array_data = array();
     $query = "select * from payment_method";
+    $result = $conn->query($query);
+
+
+    if ($result) {
+        while ($row = $result->fetch_assoc()) {
+            $array_data[] = $row;
+        }
+        $data = array("status" => true, "data" => $array_data);
+    } else {
+        $data = array("status" => false, "data" => $conn->error);
+    }
+
+    echo json_encode($data);
+}
+function read_payments($conn)
+{
+    $data = array();
+    $array_data = array();
+    $query = "select * from payment";
     $result = $conn->query($query);
 
 

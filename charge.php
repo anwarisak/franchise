@@ -36,7 +36,7 @@ include 'include/header.php';
                 Add charge
               </button>
             </div>
-            <table class="table table-striped table-bchargeless table-sm"" id=" chargetable">
+            <table class="table table-striped table-bchargeless table-sm"" id="chargetable">
 
               <thead>
 

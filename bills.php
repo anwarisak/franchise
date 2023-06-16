@@ -36,7 +36,7 @@ include 'include/header.php';
                                 Add bill
                             </button>
                         </div>
-                        <table class="table table-striped table-borderless table-sm" id="assign_job_table">
+                        <table class="table table-striped table-borderless table-sm" id="billTable">
 
                             <thead>
 

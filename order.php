@@ -36,7 +36,7 @@ include 'include/header.php';
                 Add order
               </button>
             </div>
-            <table class="table table-striped table-borderless table-sm"" id=" ordertable">
+            <table class="table table-striped table-borderless table-sm"" id="ordertable">
 
               <thead>
 

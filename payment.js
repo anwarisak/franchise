@@ -369,7 +369,7 @@ function fill_total_price(franchisee_id) {
     $("#paymnettable thead").html('');
    
     let sendingData ={
-        "action": "tableview"
+        "action": "read_payments"
     }
   
     $.ajax({
@@ -404,10 +404,10 @@ function fill_total_price(franchisee_id) {
                }
 
                 }
-                th += "<td>Action</td></tr>";
+              //   th += "<td>Action</td></tr>";
 
-               tr += `<td> <button class="btn btn-info update_info btn-primary btn-sm"  update_id=${res['payment_id']}><i class="fas fa-edit" style="color: #fff" ></i></button>
-               `
+              //  tr += `<td> <button class="btn btn-info update_info btn-primary btn-sm"  update_id=${res['payment_id']}><i class="fas fa-edit" style="color: #fff" ></i></button>
+              //  `
                 tr+= "</tr>"
               
             })

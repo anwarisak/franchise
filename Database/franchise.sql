@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.0
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 08, 2023 at 06:20 PM
--- Server version: 10.4.24-MariaDB
--- PHP Version: 8.1.6
+-- Generation Time: Jun 15, 2023 at 10:34 AM
+-- Server version: 10.4.28-MariaDB
+-- PHP Version: 8.0.28
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -25,16 +25,25 @@ DELIMITER $$
 --
 -- Procedures
 --
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_charging` (IN `_month_id` VARCHAR(50), IN `_year` VARCHAR(50), IN `_description` TEXT, IN `_account_id` INT, IN `_users_id` VARCHAR(50))   BEGIN
-INSERT IGNORE INTO `charge`(`employee_id`, `job_title_id`, `amount`, `month_id`, `year`, `description`, `account_id`,`users_id`, `date`)
-SELECT e.employee_id,j.job_title_id,j.salary,_month_id,_year,_description,_account_id,_users_id,
-CURRENT_DATE from employee e JOIN job_title j on e.title_id=j.title_id;
-
-if(row_count()> 0)THEN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_charging` (IN `_month_id` INT(50), IN `_year` VARCHAR(50), IN `_description` TEXT, IN `_Account_id` INT, IN `_user_id` VARCHAR(50))   BEGIN
+if(read_salary() > read_balance(_Account_id))THEN
+SELECT "Deny" as msg;
+else
+INSERT IGNORE INTO  `charge`(`employee_id`, `job_title_id`, `amount`, `month_id`, `year`, `description`, `Account_id`, `user_id`,`date`)
+SELECT e.employee_id,j.job_title_id,j.salary,_month_id,_year,_description,_Account_id,_user_id,
+CURRENT_DATE from employee e JOIN job_title  j on e.job_title_id=j.job_title_id;
+IF(row_count()>0)THEN
 SELECT "Registered" as msg;
-
+ELSE
+SELECT "NOt" as msg;
+END IF;    
 END IF;
- 
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_item_price` (IN `_item_id` INT)   BEGIN
+
+SELECT i.price from item i  WHERE i.item_id=_item_id;
+
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `login` (IN `_username` VARCHAR(200), IN `_password` INT(255))   BEGIN
@@ -49,6 +58,13 @@ end if;
 else
 select 'deny 'message;
 end if;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `read_total_amount` (IN `_franchaise_id` INT)   BEGIN
+
+SELECT o.amount as total_amount FROM orders o WHERE o.franchisee_id=_franchaise_id;
+
+
 END$$
 
 --
@@ -81,43 +97,20 @@ DELIMITER ;
 
 CREATE TABLE `account` (
   `account_id` int(11) NOT NULL,
-  `number` int(11) DEFAULT NULL,
   `bank` varchar(255) DEFAULT NULL,
+  `number` int(11) DEFAULT NULL,
   `holder_name` varchar(50) DEFAULT NULL,
   `balance` decimal(9,2) DEFAULT NULL,
   `date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `account`
 --
 
-INSERT INTO `account` (`account_id`, `number`, `bank`, `holder_name`, `balance`, `date`) VALUES
-(1, 222222, 'dahabshiil', 'geedi', '5000.00', '2023-06-07 17:19:01'),
-(2, 3333, 'salaam bank', 'faarax', '900.00', '2023-06-07 17:40:46');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `assign_job`
---
-
-CREATE TABLE `assign_job` (
-  `assign_job_id` int(11) NOT NULL,
-  `employee_id` int(11) DEFAULT NULL,
-  `branch_id` int(11) DEFAULT NULL,
-  `shift_id` int(11) DEFAULT NULL,
-  `job_title_id` int(11) DEFAULT NULL,
-  `hours` int(11) DEFAULT NULL,
-  `assign_job_date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data for table `assign_job`
---
-
-INSERT INTO `assign_job` (`assign_job_id`, `employee_id`, `branch_id`, `shift_id`, `job_title_id`, `hours`, `assign_job_date`) VALUES
-(1, 2, 1, 2, 1, 9, '2023-06-07 20:39:26');
+INSERT INTO `account` (`account_id`, `bank`, `number`, `holder_name`, `balance`, `date`) VALUES
+(1, 'dahabshiil', 222222, 'geedi', 5000.00, '2023-06-07 17:19:01'),
+(2, 'salaam bank', 3333, 'faarax', 9000.00, '2023-06-13 12:15:06');
 
 -- --------------------------------------------------------
 
@@ -128,9 +121,35 @@ INSERT INTO `assign_job` (`assign_job_id`, `employee_id`, `branch_id`, `shift_id
 CREATE TABLE `bill` (
   `bill_id` int(11) NOT NULL,
   `employee_id` int(11) DEFAULT NULL,
-  `account_id` int(11) DEFAULT NULL,
-  `amount` decimal(9,2) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `Amount` decimal(12,0) DEFAULT NULL,
+  `user` varchar(40) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `bill`
+--
+
+INSERT INTO `bill` (`bill_id`, `employee_id`, `Amount`, `user`) VALUES
+(1, 1, 1200, 'ali'),
+(2, 2, 900, 'ali'),
+(3, 3, 1200, 'ali'),
+(4, 1, 1200, 'ali'),
+(5, 2, 900, 'ali'),
+(6, 3, 1200, 'ali');
+
+--
+-- Triggers `bill`
+--
+DELIMITER $$
+CREATE TRIGGER `update_active` AFTER INSERT ON `bill` FOR EACH ROW BEGIN
+
+update charge set active=1 WHERE
+employee_id=new.employee_id;
+
+
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -143,7 +162,7 @@ CREATE TABLE `branch` (
   `country` varchar(50) DEFAULT NULL,
   `address` varchar(50) DEFAULT NULL,
   `city` varchar(50) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `branch`
@@ -162,14 +181,24 @@ CREATE TABLE `charge` (
   `charge_id` int(11) NOT NULL,
   `employee_id` int(11) DEFAULT NULL,
   `job_title_id` int(11) DEFAULT NULL,
+  `amount` decimal(12,0) DEFAULT NULL,
   `month_id` int(11) NOT NULL,
   `year` int(11) NOT NULL,
   `description` varchar(100) NOT NULL,
-  `account_id` int(11) NOT NULL,
-  `amount` decimal(9,2) DEFAULT NULL,
-  `users_id` int(11) NOT NULL,
+  `Account_id` int(11) NOT NULL,
+  `user_id` varchar(40) NOT NULL,
+  `active` int(11) NOT NULL DEFAULT 0,
   `date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `charge`
+--
+
+INSERT INTO `charge` (`charge_id`, `employee_id`, `job_title_id`, `amount`, `month_id`, `year`, `description`, `Account_id`, `user_id`, `active`, `date`) VALUES
+(1, 1, 1, 1200, 1, 2023, 'mushaar', 1, 'ali', 1, '2023-06-13 19:04:21'),
+(2, 2, 2, 900, 1, 2023, 'mushaar', 1, 'ali', 1, '2023-06-13 19:04:29'),
+(3, 3, 1, 1200, 1, 2023, 'mushaar', 1, 'ali', 1, '2023-06-13 19:04:35');
 
 -- --------------------------------------------------------
 
@@ -185,14 +214,14 @@ CREATE TABLE `contract` (
   `comission_fee` decimal(9,2) DEFAULT NULL,
   `contract_date` date DEFAULT NULL,
   `contract_expire` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `contract`
 --
 
 INSERT INTO `contract` (`contract_id`, `franchisee_id`, `franchise_type_id`, `franchiser`, `comission_fee`, `contract_date`, `contract_expire`) VALUES
-(2, 5, 2, 'anwar', '600.00', '2023-06-07', '2023-06-09');
+(2, 5, 2, 'anwar', 600.00, '2023-06-07', '2023-06-09');
 
 -- --------------------------------------------------------
 
@@ -206,17 +235,19 @@ CREATE TABLE `employee` (
   `lastname` varchar(50) DEFAULT NULL,
   `phone` varchar(50) DEFAULT NULL,
   `state` varchar(50) DEFAULT NULL,
-  `city` varchar(50) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `city` varchar(50) DEFAULT NULL,
+  `branch_id` int(11) NOT NULL,
+  `job_title_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `employee`
 --
 
-INSERT INTO `employee` (`employee_id`, `fristname`, `lastname`, `phone`, `state`, `city`) VALUES
-(1, 'anwar', 'isak', '909', 'mm', 'mm'),
-(2, 'moahamed', 'moha', '909', 'mm', 'mm'),
-(3, 'jamaal', 'geedi', '6544332', 'mogadisho', 'Banaadir');
+INSERT INTO `employee` (`employee_id`, `fristname`, `lastname`, `phone`, `state`, `city`, `branch_id`, `job_title_id`) VALUES
+(1, 'anwar', 'isak', '909', 'mm', 'mm', 1, 1),
+(2, 'moahamed', 'moha', '909', 'mm', 'mm', 1, 2),
+(3, 'jamaal', 'geedi', '6544332', 'mogadisho', 'Banaadir', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -232,7 +263,7 @@ CREATE TABLE `franchisee` (
   `country` varchar(200) DEFAULT NULL,
   `franchise_type_id` int(11) DEFAULT NULL,
   `reg_date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `franchisee`
@@ -254,7 +285,7 @@ INSERT INTO `franchisee` (`franchisee_id`, `name`, `address`, `city`, `country`,
 CREATE TABLE `franchise_type` (
   `franchise_type_id` int(11) NOT NULL,
   `name` varchar(50) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `franchise_type`
@@ -276,17 +307,17 @@ CREATE TABLE `item` (
   `name` varchar(50) DEFAULT NULL,
   `quantity` int(11) DEFAULT NULL,
   `item_cost` decimal(9,2) DEFAULT NULL,
-  `price` decimal(9,2) DEFAULT NULL,
+  `price` decimal(12,0) DEFAULT NULL,
   `added_date` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `item`
 --
 
 INSERT INTO `item` (`item_id`, `item_type_id`, `name`, `quantity`, `item_cost`, `price`, `added_date`) VALUES
-(1, 1, 'dhalo', 3, '300.00', '400.00', '2023-06-07'),
-(2, 1, 'televion', 2, '200.00', '250.00', '2023-06-07');
+(1, 1, 'dhalo', 3, 300.00, 400, '2023-06-07'),
+(2, 1, 'televion', 2, 200.00, 250, '2023-06-07');
 
 -- --------------------------------------------------------
 
@@ -297,7 +328,7 @@ INSERT INTO `item` (`item_id`, `item_type_id`, `name`, `quantity`, `item_cost`, 
 CREATE TABLE `item_type` (
   `item_type_id` int(11) NOT NULL,
   `name` varchar(50) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `item_type`
@@ -317,16 +348,16 @@ INSERT INTO `item_type` (`item_type_id`, `name`) VALUES
 CREATE TABLE `job_title` (
   `job_title_id` int(11) NOT NULL,
   `name` varchar(50) DEFAULT NULL,
-  `salary` decimal(9,2) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `salary` decimal(12,0) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `job_title`
 --
 
 INSERT INTO `job_title` (`job_title_id`, `name`, `salary`) VALUES
-(1, 'vp', '1200.00'),
-(2, 'manager', '900.00');
+(1, 'vp', 1200),
+(2, 'manager', 900);
 
 -- --------------------------------------------------------
 
@@ -337,7 +368,7 @@ INSERT INTO `job_title` (`job_title_id`, `name`, `salary`) VALUES
 CREATE TABLE `month` (
   `month_id` int(11) NOT NULL,
   `month_name` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `month`
@@ -365,17 +396,10 @@ CREATE TABLE `orders` (
   `franchisee_id` int(11) DEFAULT NULL,
   `item_id` int(11) DEFAULT NULL,
   `quantity` int(11) DEFAULT NULL,
-  `amount` decimal(9,2) DEFAULT NULL,
+  `amount` decimal(12,0) DEFAULT NULL,
+  `status` varchar(30) NOT NULL DEFAULT 'pending',
   `order_date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data for table `orders`
---
-
-INSERT INTO `orders` (`orders_id`, `franchisee_id`, `item_id`, `quantity`, `amount`, `order_date`) VALUES
-(1, 2, 2, 5, '400.00', '2023-06-08 08:50:48'),
-(2, 1, 1, 5, '300.00', '2023-06-08 09:12:35');
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -385,11 +409,31 @@ INSERT INTO `orders` (`orders_id`, `franchisee_id`, `item_id`, `quantity`, `amou
 
 CREATE TABLE `payment` (
   `payment_id` int(11) NOT NULL,
-  `payment_method_id` int(11) NOT NULL,
   `franchisee_id` int(11) DEFAULT NULL,
   `amount` decimal(9,2) DEFAULT NULL,
-  `account_id` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `account_id` int(11) DEFAULT NULL,
+  `payment_method_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `payment`
+--
+
+INSERT INTO `payment` (`payment_id`, `franchisee_id`, `amount`, `account_id`, `payment_method_id`) VALUES
+(1, 1, 800.00, 1, 1);
+
+--
+-- Triggers `payment`
+--
+DELIMITER $$
+CREATE TRIGGER `update_payment` AFTER INSERT ON `payment` FOR EACH ROW BEGIN
+
+UPDATE orders o set o.status='paid' WHERE o.franchisee_id=new.franchisee_id;
+
+
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -400,7 +444,7 @@ CREATE TABLE `payment` (
 CREATE TABLE `payment_method` (
   `payment_method_id` int(11) NOT NULL,
   `method_name` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `payment_method`
@@ -422,7 +466,7 @@ INSERT INTO `payment_method` (`payment_method_id`, `method_name`) VALUES
 CREATE TABLE `shift` (
   `shift_id` int(11) NOT NULL,
   `name` varchar(50) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `shift`
@@ -446,14 +490,14 @@ CREATE TABLE `users` (
   `image` text DEFAULT NULL,
   `status` varchar(50) DEFAULT 'active',
   `date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`
 --
 
 INSERT INTO `users` (`users_id`, `username`, `employee_id`, `password`, `image`, `status`, `date`) VALUES
-('1', 'ali', 2, '81dc9bdb52d04dc20036dbd8313ed055', '1.png', 'active', '2023-06-07 17:42:38'),
+('1', 'ali', 2, '202cb962ac59075b964b07152d234b70', '1.png', 'active', '2023-06-13 08:46:51'),
 ('2', 'mo', 2, '81dc9bdb52d04dc20036dbd8313ed055', '2.png', 'active', '2023-06-08 14:19:15');
 
 --
@@ -467,21 +511,11 @@ ALTER TABLE `account`
   ADD PRIMARY KEY (`account_id`);
 
 --
--- Indexes for table `assign_job`
---
-ALTER TABLE `assign_job`
-  ADD PRIMARY KEY (`assign_job_id`),
-  ADD KEY `branch_id` (`branch_id`),
-  ADD KEY `shift_id` (`shift_id`),
-  ADD KEY `job_title_id` (`job_title_id`),
-  ADD KEY `employee_id` (`employee_id`);
-
---
 -- Indexes for table `bill`
 --
 ALTER TABLE `bill`
   ADD PRIMARY KEY (`bill_id`),
-  ADD KEY `account_id` (`account_id`),
+  ADD KEY `account_id` (`user`),
   ADD KEY `employee_id` (`employee_id`);
 
 --
@@ -495,10 +529,11 @@ ALTER TABLE `branch`
 --
 ALTER TABLE `charge`
   ADD PRIMARY KEY (`charge_id`),
+  ADD UNIQUE KEY `employee_id_2` (`employee_id`,`month_id`,`year`),
   ADD KEY `employee_id` (`employee_id`),
   ADD KEY `job_title_id` (`job_title_id`),
   ADD KEY `month_id` (`month_id`),
-  ADD KEY `account_id` (`account_id`);
+  ADD KEY `account_id` (`Account_id`);
 
 --
 -- Indexes for table `contract`
@@ -599,16 +634,10 @@ ALTER TABLE `account`
   MODIFY `account_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT for table `assign_job`
---
-ALTER TABLE `assign_job`
-  MODIFY `assign_job_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
 -- AUTO_INCREMENT for table `bill`
 --
 ALTER TABLE `bill`
-  MODIFY `bill_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `bill_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `branch`
@@ -620,7 +649,7 @@ ALTER TABLE `branch`
 -- AUTO_INCREMENT for table `charge`
 --
 ALTER TABLE `charge`
-  MODIFY `charge_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `charge_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `contract`
@@ -674,13 +703,13 @@ ALTER TABLE `month`
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `orders_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `orders_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `payment`
 --
 ALTER TABLE `payment`
-  MODIFY `payment_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `payment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `payment_method`
@@ -697,31 +726,6 @@ ALTER TABLE `shift`
 --
 -- Constraints for dumped tables
 --
-
---
--- Constraints for table `assign_job`
---
-ALTER TABLE `assign_job`
-  ADD CONSTRAINT `assign_job_ibfk_1` FOREIGN KEY (`branch_id`) REFERENCES `branch` (`branch_id`) ON UPDATE CASCADE,
-  ADD CONSTRAINT `assign_job_ibfk_2` FOREIGN KEY (`shift_id`) REFERENCES `shift` (`shift_id`) ON UPDATE CASCADE,
-  ADD CONSTRAINT `assign_job_ibfk_3` FOREIGN KEY (`job_title_id`) REFERENCES `job_title` (`job_title_id`) ON UPDATE CASCADE,
-  ADD CONSTRAINT `assign_job_ibfk_4` FOREIGN KEY (`employee_id`) REFERENCES `employee` (`employee_id`) ON UPDATE CASCADE;
-
---
--- Constraints for table `bill`
---
-ALTER TABLE `bill`
-  ADD CONSTRAINT `bill_ibfk_1` FOREIGN KEY (`account_id`) REFERENCES `account` (`account_id`) ON UPDATE CASCADE,
-  ADD CONSTRAINT `bill_ibfk_2` FOREIGN KEY (`employee_id`) REFERENCES `employee` (`employee_id`) ON UPDATE CASCADE;
-
---
--- Constraints for table `charge`
---
-ALTER TABLE `charge`
-  ADD CONSTRAINT `charge_ibfk_1` FOREIGN KEY (`employee_id`) REFERENCES `employee` (`employee_id`) ON UPDATE CASCADE,
-  ADD CONSTRAINT `charge_ibfk_2` FOREIGN KEY (`job_title_id`) REFERENCES `job_title` (`job_title_id`) ON UPDATE CASCADE,
-  ADD CONSTRAINT `charge_ibfk_3` FOREIGN KEY (`month_id`) REFERENCES `month` (`month_id`),
-  ADD CONSTRAINT `charge_ibfk_4` FOREIGN KEY (`account_id`) REFERENCES `account` (`account_id`);
 
 --
 -- Constraints for table `contract`
@@ -741,13 +745,6 @@ ALTER TABLE `franchisee`
 --
 ALTER TABLE `item`
   ADD CONSTRAINT `item_ibfk_1` FOREIGN KEY (`item_type_id`) REFERENCES `item_type` (`item_type_id`) ON UPDATE CASCADE;
-
---
--- Constraints for table `orders`
---
-ALTER TABLE `orders`
-  ADD CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`franchisee_id`) REFERENCES `franchisee` (`franchisee_id`) ON UPDATE CASCADE,
-  ADD CONSTRAINT `orders_ibfk_2` FOREIGN KEY (`item_id`) REFERENCES `item` (`item_id`) ON UPDATE CASCADE;
 
 --
 -- Constraints for table `payment`
