@@ -2,10 +2,10 @@
 -- version 5.2.0
 -- https://www.phpmyadmin.net/
 --
--- Host: localhost
--- Generation Time: Jun 16, 2023 at 06:44 PM
--- Server version: 10.4.21-MariaDB
--- PHP Version: 7.4.29
+-- Host: 127.0.0.1
+-- Generation Time: Jun 18, 2023 at 09:01 PM
+-- Server version: 10.4.24-MariaDB
+-- PHP Version: 8.1.6
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -25,6 +25,13 @@ DELIMITER $$
 --
 -- Procedures
 --
+CREATE DEFINER=`root`@`localhost` PROCEDURE `charge_repo` (IN `_month_name` VARCHAR(100))   BEGIN
+
+SELECT concat(e.fristname,' ',e.lastname) AS employee_name,j.name AS jop_name,m.month_name,ch.year,ch.description,a.bank,ch.user_id AS user,ch.date FROM charge ch JOIN employee e ON ch.employee_id=e.employee_id JOIN job_title j ON ch.job_title_id=j.job_title_id JOIN month m ON ch.month_id=m.month_id JOIN account a ON ch.Account_id=a.account_id WHERE m.month_name=_month_name; 
+
+
+END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `get_charging` (IN `_month_id` INT(50), IN `_year` VARCHAR(50), IN `_description` TEXT, IN `_Account_id` INT, IN `_user_id` VARCHAR(50))   BEGIN
 if(read_salary() > read_balance(_Account_id))THEN
 SELECT "Deny" as msg;
@@ -58,6 +65,30 @@ end if;
 else
 select 'deny 'message;
 end if;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `order_repo` (IN `_franchise_name` VARCHAR(100))   BEGIN
+if(_franchise_name = ' ')THEN
+
+SELECT f.name AS franchisee_name,i.name AS item_name,o.quantity,o.amount FROM orders o JOIN franchisee f ON o.franchisee_id=f.franchisee_id JOIN item i ON o.item_id=i.item_id;
+
+ELSE
+
+SELECT f.name AS franchisee_name,i.name AS item_name,o.quantity,o.amount FROM orders o JOIN franchisee f ON o.franchisee_id=f.franchisee_id JOIN item i ON o.item_id=i.item_id WHERE f.name=_franchise_name;
+
+END IF;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `payment_repo` (IN `_franchise_name` VARCHAR(100))   BEGIN
+if(_franchise_name = ' ')THEN
+
+SELECT f.name AS franchisee_name,p.amount,a.bank,pa.method_name FROM payment p JOIN franchisee f ON p.franchisee_id=f.franchisee_id JOIN account a ON p.account_id=a.account_id JOIN payment_method pa ON p.payment_method_id=pa.payment_method_id;
+
+ELSE
+
+SELECT f.name AS franchisee_name,p.amount,a.bank,pa.method_name FROM payment p JOIN franchisee f ON p.franchisee_id=f.franchisee_id JOIN account a ON p.account_id=a.account_id JOIN payment_method pa ON p.payment_method_id=pa.payment_method_id WHERE f.name=_franchise_name;
+
+END IF;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `read_total_amount` (IN `_franchaise_id` INT)   BEGIN
@@ -415,7 +446,7 @@ INSERT INTO `orders` (`orders_id`, `franchisee_id`, `item_id`, `quantity`, `amou
 (1, 1, 1, 1, '400', 'paid', '2023-06-15 06:16:15'),
 (2, 3, 2, 2, '500', 'paid', '2023-06-16 15:34:10'),
 (3, 2, 1, 2, '800', 'paid', '2023-06-16 16:08:08'),
-(4, 4, 2, 1, '250', 'pending', '2023-06-16 16:07:55');
+(4, 4, 2, 1, '250', 'paid', '2023-06-18 15:52:35');
 
 -- --------------------------------------------------------
 
@@ -439,7 +470,8 @@ INSERT INTO `payment` (`payment_id`, `franchisee_id`, `amount`, `account_id`, `p
 (1, 1, '800.00', 1, 1),
 (2, 1, '400.00', 1, 1),
 (3, 3, '500.00', 2, 3),
-(4, 2, '800.00', 2, 1);
+(4, 2, '800.00', 2, 1),
+(5, 4, '250.00', 2, 2);
 
 --
 -- Triggers `payment`
@@ -731,7 +763,7 @@ ALTER TABLE `orders`
 -- AUTO_INCREMENT for table `payment`
 --
 ALTER TABLE `payment`
-  MODIFY `payment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `payment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `payment_method`
