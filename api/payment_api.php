@@ -115,7 +115,7 @@ function read_payments($conn)
 {
     $data = array();
     $array_data = array();
-    $query = "select * from payment";
+    $query = "SELECT p.payment_id,f.name AS franchisee_name,p.amount,a.bank,pa.method_name FROM payment p JOIN franchisee f ON p.franchisee_id=f.franchisee_id JOIN account a ON p.account_id=a.account_id JOIN payment_method pa ON p.payment_method_id=pa.payment_method_id";
     $result = $conn->query($query);
 
 

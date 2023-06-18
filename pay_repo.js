@@ -1,11 +1,11 @@
-$("#payment_id").attr("disabled", true);
+$("#franc_name").attr("disabled", true);
 
 $("#type").on("change", function(){
     if($("#type").val()== 0){
-    $("#payment_id").attr("disabled", true);
+    $("#franc_name").attr("disabled", true);
 
     }else{
-        $("#payment_id").attr("disabled", false);
+        $("#franc_name").attr("disabled", false);
     }
 })
 
@@ -73,11 +73,11 @@ $("#pay_repoform").on("submit", function(event){
     $("#pay_repotable tr").html("");
 
 
-    let payment_id= $("#payment_id").val();
+    let franc_name= $("#franc_name").val();
     //let to= $("#to").val();
     let sendingData = {
 
-        "payment_id": payment_id,
+        "franc_name": franc_name,
 
         "action": "get_pay",
     }

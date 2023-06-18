@@ -12,7 +12,7 @@ function get_pay($conn)
 
     $message = array();
     // read all students in the database
-    $query = "call  payreport()";
+    $query = "call  payment_repo('$franc_name')";
     // excute the query
 
     $result = $conn->query($query);
@@ -33,37 +33,37 @@ function get_pay($conn)
     echo json_encode($message);
 }
 
-function get_user_full_fun($conn)
-{
-    extract($_POST);
+// function get_user_full_fun($conn)
+// {
+//     extract($_POST);
 
-    $data = array();
-    $message = array();
-    // read all students in the database
-    $query = "call get_user_full('USR21', '$from', '$to')";
+//     $data = array();
+//     $message = array();
+//     // read all students in the database
+//     $query = "call get_user_full('USR21', '$from', '$to')";
 
 
-    // excute the query
+//     // excute the query
 
-    $result = $conn->query($query);
+//     $result = $conn->query($query);
 
-    // success or error
+//     // success or error
 
-    if ($result) {
+//     if ($result) {
 
-        while ($row = $result->fetch_assoc()) {
+//         while ($row = $result->fetch_assoc()) {
 
-            $data[] = $row;
-        }
+//             $data[] = $row;
+//         }
 
-        $message = array("status" => true, "data" => $data);
-    } else {
+//         $message = array("status" => true, "data" => $data);
+//     } else {
 
-        $message = array("status" => false, "data" => $conn->error);
-    }
+//         $message = array("status" => false, "data" => $conn->error);
+//     }
 
-    echo json_encode($message);
-}
+//     echo json_encode($message);
+// }
 
 
 

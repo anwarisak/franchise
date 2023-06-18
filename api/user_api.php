@@ -289,7 +289,7 @@ function get_topcustomer($conn)
 {
     $data = array();
     $array_data = array();
-    $query = "select * from orders order by amount DESC LIMIT 5";
+    $query = "SELECT o.orders_id,f.name As franchisee_name,i.name AS item_name,o.quantity,o.amount,o.status,o.order_date FROM orders o JOIN franchisee f ON f.franchisee_id=o.franchisee_id JOIN item i ON i.item_id=o.item_id ORDER BY `o`.`amount` DESC LIMIT 5";
     $result = $conn->query($query);
 
 

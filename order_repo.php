@@ -37,7 +37,7 @@ include 'include/header.php';
 
                                 </div>
                                 <div class="card-block table-border-style">
-                                    <form id="order_repoform">
+                                    <form id="order_repo_form">
                                         <div class="row">
 
                                             <div class="col-sm-4">
@@ -49,27 +49,27 @@ include 'include/header.php';
                                             </div>
 
                                             <div class="col-sm-4">
-                                                <input type="input" class="form-control" name="order_id" id="order_id">
+                                                <input type="input" class="form-control" name="franc_name" id="franc_name">
                                             </div>
 
 
                                             <button type="submit" id="addnew" class="btn btn-info m-2"> add transacion</button>
-                                            <div class="table-responsive" id="print_Area">
-                                                <img width="95%" height="250px  object-fit: cover" src="Assets/images/dashboard/cargo.png" alt="">
-                                                <table class="table" id="order_repotable">
-                                                    <thead>
 
-                                                    </thead>
-                                                    <tbody>
-
-                                                    </tbody>
-
-                                                </table>
-                                            </div>
 
                                         </div>
                                     </form>
+                                    <div class="table-responsive" id="print_Area">
+                                        <img width="95%" height="250px  object-fit: cover" src="Assets/images/dashboard/cargo.png" alt="">
+                                        <table class="table" id="order_repo_table">
+                                            <thead>
 
+                                            </thead>
+                                            <tbody>
+
+                                            </tbody>
+
+                                        </table>
+                                    </div>
                                     <button class="btn btn-success" id="print_statement"> <i class="fa fa-print"></i>print</button>
                                     <button class="btn btn-info" id="export_statment"><i class="fa fa-file"></i> excel</button>
 

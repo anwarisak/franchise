@@ -37,19 +37,19 @@ include 'include/header.php';
 
                                 </div>
                                 <div class="card-block table-border-style">
-                                    <form id="pay_repoform">
+                                    <form id="charge_repo_form">
                                         <div class="row">
 
-                                            <div class="col-sm-4">
+                                            <!-- <div class="col-sm-4">
                                                 <select name="type" id="type" class="form-control">
                                                     <option value="0">All</option>
                                                     <option value="custom">custom</option>
 
                                                 </select>
-                                            </div>
+                                            </div> -->
 
                                             <div class="col-sm-4">
-                                                <input type="input" class="form-control" name="franc_name" id="franc_name">
+                                                <input type="input" class="form-control" name="month_name" id="month_name">
                                             </div>
 
 
@@ -60,7 +60,7 @@ include 'include/header.php';
                                     </form>
                                     <div class="table-responsive" id="print_Area">
                                         <img width="95%" height="250px  object-fit: cover" src="Assets/images/dashboard/cargo.png" alt="">
-                                        <table class="table" id="pay_repotable">
+                                        <table class="table" id="charge_repo_table">
                                             <thead>
 
                                             </thead>
@@ -102,4 +102,4 @@ include 'include/header.php';
 include 'include/footer.php';
 ?>
 
-<script src="pay_repo.js"></script>
+<script src="charge_repo.js"></script>

@@ -137,7 +137,7 @@
       </a>
       <div class="collapse" id="report">
         <ul class="nav flex-column sub-menu">
-          <li class="nav-item"> <a class="nav-link" href="customer_repo.php"> customer report </a></li>
+          <li class="nav-item"> <a class="nav-link" href="charge_repo.php"> charge report </a></li>
           <li class="nav-item"> <a class="nav-link" href="order_repo.php"> order report </a></li>
           <li class="nav-item"> <a class="nav-link" href="pay_repo.php"> payment report </a></li>
         </ul>

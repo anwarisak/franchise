@@ -1,11 +1,11 @@
-$("#order_id").attr("disabled", true);
+$("#franc_name").attr("disabled", true);
 
 $("#type").on("change", function(){
     if($("#type").val()== 0){
-    $("#order_id").attr("disabled", true);
+    $("#franc_name").attr("disabled", true);
 
     }else{
-        $("#order_id").attr("disabled", false);
+        $("#franc_name").attr("disabled", false);
     }
 })
 
@@ -67,19 +67,19 @@ $("#export_statement").on("click", function(){
 
 btnAction = "Insert";
 
-$("#order_repoform").on("submit", function(event){
+$("#order_repo_form").on("submit", function(event){
     
     event.preventDefault();
-    $("#order_repotable tr").html("");
+    $("#order_repo_table tr").html("");
 
 
-    let order_id= $("#order_id").val();
+    let franc_name= $("#franc_name").val();
     //let to= $("#to").val();
     let sendingData = {
 
-        "order_id": order_id,
+        "franc_name": franc_name,
 
-        "action": "get_orders",
+        "action": "get_order_repo",
     }
 
   $.ajax({
@@ -113,8 +113,8 @@ $("#order_repoform").on("submit", function(event){
                tr += "</tr>";
             })
 
-            $("#order_repotable thead").append(th);
-            $("#order_repotable tbody").append(tr);
+            $("#order_repo_table thead").append(th);
+            $("#order_repo_table tbody").append(tr);
         }
          
     },
