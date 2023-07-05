@@ -111,6 +111,7 @@ function read_payment_method($conn)
 
     echo json_encode($data);
 }
+
 function read_payments($conn)
 {
     $data = array();

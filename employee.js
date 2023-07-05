@@ -1,6 +1,6 @@
 loademployee();
-// filljob();
-// fillbranch();
+filljob();
+fillbranch();
 
 $("#Addemployee").on("click", function(){
     $("#employeemodal").modal("show");
@@ -21,7 +21,8 @@ $("#employeeform").on("submit", function(event){
     let phone= $("#phone").val();
     let state= $("#state").val();
     let city= $("#city").val();
-   
+    let job_title_id= $("#job_title_id").val();
+    let branch_id= $("#branch_id").val();
     let employee_id= $("#update_id").val();
   
     let sendingData = {}
@@ -33,6 +34,8 @@ $("#employeeform").on("submit", function(event){
         "phone": phone,
         "state": state,
         "city": city,
+        "job_title_id": job_title_id,
+        "branch_id": branch_id,
         "action": "register_employee",
     }
   
@@ -44,7 +47,8 @@ $("#employeeform").on("submit", function(event){
             "phone": phone,
             "state": state,
             "city": city,
-           
+            "job_title_id": job_title_id,
+            "branch_id": branch_id,
             "action": "update_employee",
             
      
@@ -83,83 +87,83 @@ $("#employeeform").on("submit", function(event){
   
   })
  
-  // function filljob(){
+  function filljob(){
  
-  //   let sendingData ={
-  //       "action": "read_job"
-  //   }
+    let sendingData ={
+        "action": "read_job"
+    }
   
-  //   $.ajax({
-  //     method: "POST",
-  //     dataType: "JSON",
-  //     url: "api/employee_api.php",
-  //     data : sendingData,
+    $.ajax({
+      method: "POST",
+      dataType: "JSON",
+      url: "api/employee_api.php",
+      data : sendingData,
   
-  //       success : function(data){
-  //           let status= data.status;
-  //           let response= data.data;
-  //           let html='';
-  //           let tr= '';
+        success : function(data){
+            let status= data.status;
+            let response= data.data;
+            let html='';
+            let tr= '';
   
-  //           if(status){
-  //               response.forEach(res=>{
-  //                 html+= `<option value="${res['job_title_id']}">${res['name']}</option>`;
+            if(status){
+                response.forEach(res=>{
+                  html+= `<option value="${res['job_title_id']}">${res['name']}</option>`;
                    
-  //               })
+                })
   
-  //               $("#job_title_id").append(html);
+                $("#job_title_id").append(html);
   
                
-  //           }else{
-  //             displaymessage("error", response);
-  //           }
+            }else{
+              displaymessage("error", response);
+            }
   
-  //       },
-  //       error: function(data){
+        },
+        error: function(data){
   
-  //       }
+        }
   
-  //   })
-  // }
+    })
+  }
  
-  // function fillbranch(){
+  function fillbranch(){
  
-  //   let sendingData ={
-  //       "action": "read_branch"
-  //   }
+    let sendingData ={
+        "action": "read_branch"
+    }
   
-  //   $.ajax({
-  //     method: "POST",
-  //     dataType: "JSON",
-  //     url: "api/employee_api.php",
-  //     data : sendingData,
+    $.ajax({
+      method: "POST",
+      dataType: "JSON",
+      url: "api/employee_api.php",
+      data : sendingData,
   
-  //       success : function(data){
-  //           let status= data.status;
-  //           let response= data.data;
-  //           let html='';
-  //           let tr= '';
+        success : function(data){
+            let status= data.status;
+            let response= data.data;
+            let html='';
+            let tr= '';
   
-  //           if(status){
-  //               response.forEach(res=>{
-  //                 html+= `<option value="${res['branch_id']}">${res['name']}</option>`;
+            if(status){
+                response.forEach(res=>{
+                  html+= `<option value="${res['branch_id']}">${res['country']}</option>`;
                    
-  //               })
+                })
   
-  //               $("#branch_id").append(html);
+                $("#branch_id").append(html);
   
                
-  //           }else{
-  //             displaymessage("error", response);
-  //           }
+            }else{
+              displaymessage("error", response);
+            }
   
-  //       },
-  //       error: function(data){
+        },
+        error: function(data){
   
-  //       }
+        }
   
-  //   })
-  // }
+    })
+  }
 
  function loademployee(){
     $("#employee_table tbody").html('');
@@ -250,6 +254,8 @@ $("#employeeform").on("submit", function(event){
                $("#phone").val(response['phone']);
                $("#state").val(response['state']);
                $("#city").val(response['city']);
+               $("#branch_id").val(response['branch_id']);
+               $("#job_title_id").val(response['job_title_id']);
              
                $("#employeemodal").modal("show");
            

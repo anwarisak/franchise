@@ -20,7 +20,7 @@ function register_user($conn)
     // allowed images
 
     $allowedImages =  ["image/jpg", "image/jpeg", "image/png"];
-    $max_size = 20 * 1024 * 1024;
+    $max_size = 15 * 1024 * 1024;
 
     if (in_array($file_type, $allowedImages)) {
 
@@ -223,47 +223,6 @@ function get_total_user($conn)
     echo json_encode($data);
 }
 
-function get_total_franchisee($conn)
-{
-    extract($_POST);
-    $data = array();
-    $array_data = array();
-    $query = "select count(franchisee_id) as franchisee  from franchisee";
-    $result = $conn->query($query);
-
-
-    if ($result) {
-        $row = $result->fetch_assoc();
-
-        $data = array("status" => true, "data" => $row);
-    } else {
-        $data = array("status" => false, "data" => $conn->error);
-    }
-
-    echo json_encode($data);
-}
-
-
-function get_total_order($conn)
-{
-    extract($_POST);
-    $data = array();
-    $array_data = array();
-    $query = "select count(orders_id ) as orders  from orders";
-    $result = $conn->query($query);
-
-
-    if ($result) {
-        $row = $result->fetch_assoc();
-
-        $data = array("status" => true, "data" => $row);
-    } else {
-        $data = array("status" => false, "data" => $conn->error);
-    }
-
-    echo json_encode($data);
-}
-
 
 function get_total_amount($conn)
 {
@@ -278,26 +237,6 @@ function get_total_amount($conn)
         $row = $result->fetch_assoc();
 
         $data = array("status" => true, "data" => $row);
-    } else {
-        $data = array("status" => false, "data" => $conn->error);
-    }
-
-    echo json_encode($data);
-}
-
-function get_topcustomer($conn)
-{
-    $data = array();
-    $array_data = array();
-    $query = "SELECT o.orders_id,f.name As franchisee_name,i.name AS item_name,o.quantity,o.amount,o.status,o.order_date FROM orders o JOIN franchisee f ON f.franchisee_id=o.franchisee_id JOIN item i ON i.item_id=o.item_id ORDER BY `o`.`amount` DESC LIMIT 5";
-    $result = $conn->query($query);
-
-
-    if ($result) {
-        while ($row = $result->fetch_assoc()) {
-            $array_data[] = $row;
-        }
-        $data = array("status" => true, "data" => $array_data);
     } else {
         $data = array("status" => false, "data" => $conn->error);
     }

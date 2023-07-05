@@ -1,7 +1,7 @@
 totaluser();
 totalamount();
-totaloder();
-totalfranchisee();
+totalinvoice();
+totalcustomer();
 fillemployee();
 loadData();
 loadtop();
@@ -345,12 +345,10 @@ $.ajax({
 })
 }
 
-
-
-function totalfranchisee(){
+function totalcustomer(){
   
   let sendingData ={
-    "action": "get_total_franchisee",
+    "action": "get_total_customer",
 }
 
 $.ajax({
@@ -366,7 +364,7 @@ $.ajax({
 
         if(status){
 
-            document.querySelector("#totalfranchisee").innerText = response['franchisee']
+            document.querySelector("#totalcustomer").innerText = response['customer']
 
         }else{
           displaymessagee("error", response);
@@ -379,8 +377,6 @@ $.ajax({
 
 })
 }
-
-
 function totaluser(){
   
   let sendingData ={
@@ -413,12 +409,10 @@ $.ajax({
 
 })
 }
-
-
-function totaloder(){
+function totalinvoice(){
   
   let sendingData ={
-    "action": "get_total_order",
+    "action": "get_total_invoice",
 }
 
 $.ajax({
@@ -434,7 +428,7 @@ $.ajax({
 
         if(status){
 
-            document.querySelector("#totalorder").innerText = response['orders']
+            document.querySelector("#totalinvoice").innerText = response['invoice']
 
         }else{
           displaymessagee("error", response);
@@ -447,7 +441,6 @@ $.ajax({
 
 })
 }
-
 
 function totalamount(){
   

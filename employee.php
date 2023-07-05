@@ -119,20 +119,20 @@ include 'include/sidebar.php';
                         </div>
                       </div>
 
-                      <!-- <div class="col-sm-6">
+                      <div class="col-sm-6">
                         <div class="form-group">
                         <label for="">job_title</label>
                         <select name="job_title_id" id="job_title_id" class="form-control">
                         </select>
                         </div>
-                      </div> -->
-                      <!-- <div class="col-sm-6">
+                      </div>
+                      <div class="col-sm-6">
                         <div class="form-group">
                         <label for="">branch</label>
                         <select name="branch_id" id="branch_id" class="form-control">
                         </select>
                         </div>
-                      </div> -->
+                      </div>
 
                       
                             </div>
