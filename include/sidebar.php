@@ -42,13 +42,49 @@
       <div class="collapse" id="charts">
         <ul class="nav flex-column sub-menu">
           <li class="nav-item"> <a class="nav-link" href="branch.php"> create branch</a></li>
-          <li class="nav-item"> <a class="nav-link" href="employee.php">create employee</a></li>
           <li class="nav-item"> <a class="nav-link" href="job_title.php">create job_title</a></li>
+
+          <li class="nav-item"> <a class="nav-link" href="employee.php">create employee</a></li>
 
 
         </ul>
       </div>
     </li>
+
+    <li class="nav-item">
+      <a class="nav-link" data-toggle="collapse" href="#invoice" aria-expanded="false" aria-controls="invoice">
+        <i class="icon-bar-graph menu-icon"></i>
+        <span class="menu-title">Franchise</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse" id="invoice">
+        <ul class="nav flex-column sub-menu">
+        <li class="nav-item"> <a class="nav-link" href="franchisetype.php">franchise type</a></li>
+
+          <li class="nav-item"> <a class="nav-link" href="franchise.php">franchise</a></li>
+        </ul>
+      </div>
+    </li>
+
+
+    <li class="nav-item">
+      <a class="nav-link" data-toggle="collapse" href="#item" aria-expanded="false" aria-controls="item">
+        <i class="icon-head menu-icon"></i>
+        <span class="menu-title">item</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse" id="item">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"> <a class="nav-link" href="item.php">create item</a></li>
+          <li class="nav-item"> <a class="nav-link" href="item_type.php">create item_type</a></li>
+
+        </ul>
+      </div>
+    </li>
+
+   
+  
+
     <li class="nav-item">
       <a class="nav-link" data-toggle="collapse" href="#tables" aria-expanded="false" aria-controls="tables">
         <i class="icon-columns menu-icon"></i>
@@ -61,18 +97,9 @@
         </ul>
       </div>
     </li>
-    <li class="nav-item">
-      <a class="nav-link" data-toggle="collapse" href="#invoice" aria-expanded="false" aria-controls="invoice">
-        <i class="icon-bar-graph menu-icon"></i>
-        <span class="menu-title">Franchise</span>
-        <i class="menu-arrow"></i>
-      </a>
-      <div class="collapse" id="invoice">
-        <ul class="nav flex-column sub-menu">
-          <li class="nav-item"> <a class="nav-link" href="franchise.php">franchise</a></li>
-        </ul>
-      </div>
-    </li>
+
+
+  
 
 
     <li class="nav-item">
@@ -111,23 +138,6 @@
     </li>
 
 
-    <li class="nav-item">
-      <a class="nav-link" data-toggle="collapse" href="#item" aria-expanded="false" aria-controls="item">
-        <i class="icon-head menu-icon"></i>
-        <span class="menu-title">item</span>
-        <i class="menu-arrow"></i>
-      </a>
-      <div class="collapse" id="item">
-        <ul class="nav flex-column sub-menu">
-          <li class="nav-item"> <a class="nav-link" href="item.php">create item</a></li>
-          <li class="nav-item"> <a class="nav-link" href="item_type.php">create item_type</a></li>
-
-        </ul>
-      </div>
-    </li>
-
-   
-  
 
     <li class="nav-item">
       <a class="nav-link" data-toggle="collapse" href="#report" aria-expanded="false" aria-controls="report">
